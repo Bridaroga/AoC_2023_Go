@@ -1,4 +1,5 @@
 C++
+*.cpp
 prueba
 .vscode
 go.work
