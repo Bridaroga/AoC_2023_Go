@@ -33,11 +33,11 @@ func main() {
 	cDocument, err := os.Open("Calibration document.txt")
 	if err != nil {
 		log.Fatal(err)
-	} else {
+	} /*else {
 		fmt.Println("El archivo abrió, :D")
-	}
+	}*/
 	// Posterga el cierre del archivo hasta que terminan las demás líneas.
-	defer cDocument.Close()	
+	defer cDocument.Close()
 
 	lineaArchivo := bufio.NewScanner(cDocument)
 	for lineaArchivo.Scan() {
