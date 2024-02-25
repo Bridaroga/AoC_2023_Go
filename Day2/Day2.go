@@ -11,10 +11,14 @@ import (
 
 func main() {
 	// Variables
-	var cubosRojos, maxCubosRojos int
-	var cubosAzules, maxCubosAzules int
-	var cubosVerdes, maxCubosVerdes int
-	var sumaMultiplicaciones int
+	var cubosRojos int
+	var cubosAzules int
+	var cubosVerdes int
+	const maxCubosRojos int = 12
+	const maxCubosVerdes int = 13
+	const maxCubosAzules int = 14
+	var manoImposible bool
+	var sumaJuegos int
 
 	// Abrir el archivo, ojalá que sin errores.
 	cDocument, err := os.Open("Games.txt")
@@ -28,16 +32,13 @@ func main() {
 	lineaArchivo := bufio.NewScanner(cDocument)
 	for lineaArchivo.Scan() {
 		// fmt.Println(lineaArchivo.Text())
-		// Número del juego
-		// indiceNumeroJuego := strings.IndexAny(lineaArchivo.Text(), "0123456789")
-		// indiceDosPuntos := strings.Index(lineaArchivo.Text(), ":")
-		// numeroJuego := lineaArchivo.Text()[indiceNumeroJuego:indiceDosPuntos]
 		
 		// Arrays de la línea separados por ;
 		manoCubos := strings.Split(lineaArchivo.Text(), "; ")
 		// El primer array viene con el "Game ##:", se lo quitamos acá
 		manoCubos[0] = strings.Split(manoCubos[0], ": ")[1]
 		for i := range manoCubos {
+			// Array de cubos de colores
 			cubos := strings.Split(manoCubos[i], ", ")
 			for j := range cubos {
 				switch {
@@ -47,7 +48,7 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					} else if maxCubosRojos < cubosRojos {
-						maxCubosRojos = cubosRojos
+						manoImposible = true
 					}
 				case strings.Contains(cubos[j], "blue"):
 					indiceNumero := strings.Split(cubos[j], " ")
@@ -55,7 +56,7 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					} else if maxCubosAzules < cubosAzules {
-						maxCubosAzules = cubosAzules
+						manoImposible = true
 					}
 				case strings.Contains(cubos[j], "green"):
 					indiceNumero := strings.Split(cubos[j], " ")
@@ -63,7 +64,7 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					} else if maxCubosVerdes < cubosVerdes {
-						maxCubosVerdes = cubosVerdes
+						manoImposible = true
 					}
 				default:
 					fmt.Println("No hay cubos, :(")
@@ -71,11 +72,21 @@ func main() {
 			}
 			//fmt.Println(manoCubos)
 		}
-		sumaMultiplicaciones += maxCubosRojos * maxCubosAzules * maxCubosVerdes
-		// fmt.Println(numeroJuego, manoCubos, sumaMultiplicaciones)
-		maxCubosRojos = 0
-		maxCubosAzules = 0
-		maxCubosVerdes = 0
+		if manoImposible {
+			manoImposible = false
+		} else {
+			// Número del juego
+			indiceNumeroJuego := strings.IndexAny(lineaArchivo.Text(), "0123456789")
+			indiceDosPuntos := strings.Index(lineaArchivo.Text(), ":")
+			letraJuego := lineaArchivo.Text()[indiceNumeroJuego:indiceDosPuntos]
+			numeroJuego, err := strconv.Atoi(letraJuego)
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				sumaJuegos += numeroJuego
+			}
+		}
+		// fmt.Println(numeroJuego, manoCubos)
 	}
-	fmt.Println(sumaMultiplicaciones)
+	fmt.Println(sumaJuegos)
 }
